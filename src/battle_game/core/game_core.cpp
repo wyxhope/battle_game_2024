@@ -114,9 +114,39 @@ glm::vec4 GameCore::GetPlayerColor(uint32_t player_id) const {
   if (render_perspective_ == 0) {
     return glm::vec4{0.5f, 1.0f, 0.5f, 1.0f};
   } else if (render_perspective_ == player_id) {
-    return glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
+    return glm::vec4{0.0f, 0.5f, 0.0f, 1.0f};
   } else {
     return glm::vec4{1.0f, 0.5f, 0.5f, 1.0f};
+  }
+}
+
+glm::vec4 GameCore::GetNormalBulletColor(uint32_t player_id) const {
+  if (render_perspective_ == 0) {
+    return glm::vec4{0.5f, 1.0f, 0.5f, 1.0f};
+  } else if (render_perspective_ == player_id) {
+    return glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};//white for normal bullet
+  } else {
+    return glm::vec4{1.0f, 0.5f, 0.5f, 1.0f};
+  }
+}
+
+glm::vec4 GameCore::GetSpecialBulletColor(uint32_t player_id) const {
+  if (render_perspective_ == 0) {
+    return glm::vec4{0.5f, 1.0f, 0.5f, 1.0f};
+  } else if (render_perspective_ == player_id) {
+    return glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};//red for special bullet
+  } else {
+    return glm::vec4{1.0f, 0.5f, 0.5f, 1.0f};
+  }
+}
+
+glm::vec4 GameCore::GetMyTankColor(uint32_t player_id) const {
+  if(render_perspective_ == 0) {
+    return glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
+  }else if(render_perspective_ == player_id) {
+    return glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
+  }else{
+    return glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};
   }
 }
 

@@ -11,20 +11,29 @@ CannonBall::CannonBall(GameCore *core,
                        glm::vec2 position,
                        float rotation,
                        float damage_scale,
-                       glm::vec2 velocity)
+                       glm::vec2 velocity,
+                       int type)
     : Bullet(core, id, unit_id, player_id, position, rotation, damage_scale),
-      velocity_(velocity) {
+      velocity_(velocity), type_(type), max_speed_(glm::length(velocity)) {
 }
 
 void CannonBall::Render() {
   SetTransformation(position_, rotation_, glm::vec2{0.1f});
-  SetColor(game_core_->GetPlayerColor(player_id_));
+  if(type_ == 0 || type_ == 1){
+    SetColor(game_core_->GetNormalBulletColor(player_id_));
+  }else{
+    SetColor(game_core_->GetSpecialBulletColor(player_id_));
+  }
   SetTexture(BATTLE_GAME_ASSETS_DIR "textures/particle3.png");
   DrawModel(0);
 }
 
 void CannonBall::Update() {
   position_ += velocity_ * kSecondPerTick;
+  if(type_ == 1){
+    float k = 0.009f;
+    velocity_ += -k * velocity_;
+  }
   bool should_die = false;
   if (game_core_->IsBlockedByObstacles(position_)) {
     should_die = true;
@@ -36,7 +45,7 @@ void CannonBall::Update() {
       continue;
     }
     if (unit.second->IsHit(position_)) {
-      game_core_->PushEventDealDamage(unit.first, id_, damage_scale_ * 10.0f);
+      game_core_->PushEventDealDamage(unit.first, id_, damage_scale_* (glm::length(velocity_) / max_speed_) * 10.0f);
       should_die = true;
     }
   }

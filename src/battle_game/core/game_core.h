@@ -114,6 +114,9 @@ class GameCore {
   void SetRenderPerspective(uint32_t player_id);
   [[nodiscard]] uint32_t GetRenderPerspective() const;
   [[nodiscard]] glm::vec4 GetPlayerColor(uint32_t player_id) const;
+  [[nodiscard]] glm::vec4 GetNormalBulletColor(uint32_t player_id) const;
+  [[nodiscard]] glm::vec4 GetSpecialBulletColor(uint32_t player_id) const;
+  [[nodiscard]] glm::vec4 GetMyTankColor(uint32_t player_id) const;
 
   [[nodiscard]] bool IsOutOfRange(glm::vec2 p) const;
   [[nodiscard]] bool IsBlockedByObstacles(glm::vec2 p) const;
