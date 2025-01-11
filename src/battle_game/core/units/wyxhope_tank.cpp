@@ -82,6 +82,7 @@ void wyxhope_Tank::Render() {
 }
 
 void wyxhope_Tank::Update() {
+  shield();
   switchmode();
   if(tank_mode_ == false){
     TankMove(3.0f, glm::radians(180.0f));
@@ -93,10 +94,51 @@ void wyxhope_Tank::Update() {
 
 }
 
+void wyxhope_Tank::shield(){
+  auto player = game_core_->GetPlayer(player_id_);
+  if(player){
+    auto &input_data = player->GetInputData();
+    if(shield_switch_count_down_ == 0){
+      if (input_data.key_down[GLFW_KEY_R]) {
+        if (shield_mode_ == false) {
+          shield_mode_ = true;
+        } else {
+          shield_mode_ = false;
+        }
+        shield_switch_count_down_ = 120;
+      }
+    }else{
+      shield_switch_count_down_--;
+    }
+    if(shield_mode_ == true){
+      if(shield_count_down_ >= 600){
+        shield_mode_ = false;
+        shield_count_down_ = 0;
+        if(shield_is_){
+          game_core_->PushEventRemoveObstacle(shield_id_);
+          shield_is_ = false;
+        }
+      }else if(shield_is_ == false){
+        glm::vec2 shield_position = position_ + glm::vec2{glm::rotate(glm::mat4{1.0f}, rotation_, glm::vec3{0.0f, 0.0f, 1.0f}) * glm::vec4{0.0f, 1.0f, 0.0f, 0.0f}};
+        shield_id_ = game_core_->AddObstacle<obstacle::Block>(shield_position, rotation_, glm::vec2{0.5f, 0.1f});
+        shield_count_down_++;
+        shield_is_ = true;
+      }
+    }else{
+      shield_count_down_ = 0;
+      if(shield_is_){
+        game_core_->PushEventRemoveObstacle(shield_id_);
+        shield_is_ = false;
+      }
+    }
+  }
+
+}
+
 void wyxhope_Tank::TankMove(float move_speed, float rotate_angular_speed) {
   //Add acceleration process
   auto player = game_core_->GetPlayer(player_id_);
-  if (player) {
+  if (player && !shield_mode_) {
     auto &input_data = player->GetInputData();
     glm::vec2 offset{0.0f};
     if (input_data.key_down[GLFW_KEY_W]) {
@@ -195,7 +237,7 @@ void wyxhope_Tank::switchmode(){
 
 void wyxhope_Tank::TurretRotate() {
   auto player = game_core_->GetPlayer(player_id_);
-  if (player) {
+  if (player && !shield_mode_) {
     auto &input_data = player->GetInputData();
     auto diff = input_data.mouse_cursor_position - position_;
     if (glm::length(diff) < 1e-4) {
@@ -209,7 +251,7 @@ void wyxhope_Tank::TurretRotate() {
 void wyxhope_Tank::Fire() {
   if (fire_count_down_ == 0 && fire_mode_count_down_ == 0) {
     auto player = game_core_->GetPlayer(player_id_);
-    if (player) {
+    if (player && !shield_mode_) {
       auto &input_data = player->GetInputData();
       if (input_data.mouse_button_down[GLFW_MOUSE_BUTTON_LEFT]) {
         if(fire_mode_ == false){

@@ -14,6 +14,7 @@ class wyxhope_Tank : public Unit {
   void switchmode();
   void TurretRotate();
   void Fire();
+  void shield();
   [[nodiscard]] const char *UnitName() const override;
   [[nodiscard]] const char *Author() const override;
 
@@ -28,5 +29,10 @@ class wyxhope_Tank : public Unit {
   uint32_t fire_mode_count_down_{0}; // interval for reflect fire
   uint32_t switch_count_down_{0}; // every 120 ticks can switch mode
   uint32_t quick_mode_time_{0}; // quick mode last for 300 ticks
+  bool shield_mode_{0};
+  bool shield_is_{0};
+  uint32_t shield_id_{0};
+  uint32_t shield_switch_count_down_{0};
+  uint32_t shield_count_down_{0};
 };
 }  // namespace battle_game::unit
