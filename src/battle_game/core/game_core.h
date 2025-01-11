@@ -116,6 +116,7 @@ class GameCore {
   [[nodiscard]] glm::vec4 GetPlayerColor(uint32_t player_id) const;
   [[nodiscard]] glm::vec4 GetNormalBulletColor(uint32_t player_id) const;
   [[nodiscard]] glm::vec4 GetSpecialBulletColor(uint32_t player_id) const;
+  [[nodiscard]] glm::vec4 GetRebounceBulletColor(uint32_t player_id) const;
   [[nodiscard]] glm::vec4 GetMyTankColor(uint32_t player_id) const;
 
   [[nodiscard]] bool IsOutOfRange(glm::vec2 p) const;
@@ -183,6 +184,8 @@ class GameCore {
   int RandomInt(int low_bound, int high_bound);
   glm::vec2 RandomOnCircle();
   glm::vec2 RandomInCircle();
+
+  glm::vec2 GetSurfaceNormalVector(glm::vec2 p);
 
  private:
   std::queue<std::function<void()>> event_queue_;

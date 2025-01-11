@@ -1,4 +1,5 @@
 #include "battle_game/core/game_core.h"
+#include <cmath>
 
 namespace battle_game {
 
@@ -137,6 +138,16 @@ glm::vec4 GameCore::GetSpecialBulletColor(uint32_t player_id) const {
     return glm::vec4{1.0f, 0.0f, 0.0f, 1.0f};//red for special bullet
   } else {
     return glm::vec4{1.0f, 0.5f, 0.5f, 1.0f};
+  }
+}
+
+glm::vec4 GameCore::GetRebounceBulletColor(uint32_t player_id) const {
+  if (render_perspective_ == 0) {
+    return glm::vec4{1.0f, 1.0f, 0.0f, 1.0f};
+  } else if (render_perspective_ == player_id) {
+    return glm::vec4{1.0f, 1.0f, 0.0f, 1.0f};
+  } else {
+    return glm::vec4{1.0f, 1.0f, 0.0f, 1.0f};
   }
 }
 
@@ -349,5 +360,18 @@ std::vector<const char *> GameCore::GetSelectableUnitList() const {
     result.emplace_back(selectable_unit.data());
   }
   return result;
+}
+
+glm::vec2 GameCore::GetSurfaceNormalVector(glm::vec2 p) {
+  if(std::abs(p.x - boundary_low_.x) < 0.17f){
+    return glm::vec2{1.0f, 0.0f};
+  }else if(std::abs(p.x - boundary_high_.x) < 0.17f){
+    return glm::vec2{-1.0f, 0.0f};
+  }else if(std::abs(p.y - boundary_low_.y) < 0.17f){
+    return glm::vec2{0.0f, 1.0f};
+  }else if(std::abs(p.y - boundary_high_.y) < 0.17f){
+    return glm::vec2{0.0f, -1.0f};
+  }
+  return glm::vec2{0.0f, 0.0f};
 }
 }  // namespace battle_game

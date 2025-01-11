@@ -1,4 +1,5 @@
 #include "battle_game/core/obstacles/block.h"
+#include <cmath>
 
 namespace battle_game::obstacle {
 
@@ -14,6 +15,21 @@ bool Block::IsBlocked(glm::vec2 p) const {
   p = WorldToLocal(p);
   return p.x <= scale_.x && p.x >= -scale_.x && p.y <= scale_.y &&
          p.y >= -scale_.y;
+}
+
+std::pair<glm::vec2, glm::vec2> Block::GetSurfaceNormal(glm::vec2 origin,
+                                                        glm::vec2 terminus) {
+  auto local_terminus = WorldToLocal(terminus);
+  if(std::abs(local_terminus.x + scale_.x) < 0.17f){
+    return std::make_pair(terminus, glm::vec2{-1.0f, 0.0f});
+  }else if(std::abs(local_terminus.x - scale_.x) < 0.17f){
+    return std::make_pair(terminus, glm::vec2{1.0f, 0.0f});
+  }else if(std::abs(local_terminus.y + scale_.y) < 0.17f){
+    return std::make_pair(terminus, glm::vec2{0.0f, -1.0f});
+  }else if(std::abs(local_terminus.y - scale_.y) < 0.17f){
+    return std::make_pair(terminus, glm::vec2{0.0f, 1.0f});
+  }
+  return std::make_pair(glm::vec2{0.0f, 0.0f}, glm::vec2{0.0f, 0.0f});
 }
 
 void Block::Render() {

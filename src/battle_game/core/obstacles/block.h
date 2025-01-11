@@ -9,6 +9,8 @@ class Block : public Obstacle {
         glm::vec2 position,
         float rotation = 0.0f,
         glm::vec2 scale = glm::vec2{1.0f, 1.0f});
+  std::pair<glm::vec2, glm::vec2> GetSurfaceNormal(glm::vec2 origin,
+                                                   glm::vec2 terminus) override;
 
  private:
   [[nodiscard]] bool IsBlocked(glm::vec2 p) const override;

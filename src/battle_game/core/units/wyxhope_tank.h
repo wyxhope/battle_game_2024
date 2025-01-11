@@ -19,12 +19,14 @@ class wyxhope_Tank : public Unit {
 
   float turret_rotation_{0.0f};
   uint32_t fire_count_down_{0};
-  uint32_t consecutive_fire_count_{0};
+  uint32_t consecutive_fire_count_{0}; // interval for normal fire
   uint32_t mine_count_down_{0};
   float current_speed_{0.0f};
   float rotate_speed_{0.0f};
-  bool tank_mode_{0};
-  uint32_t switch_count_down_{0};
-  uint32_t quick_mode_time_{0};
+  bool tank_mode_{0}; // 0 for normal and 1 for quick
+  bool fire_mode_{0}; // 0 for normal and no reflect, 1 for reflect
+  uint32_t fire_mode_count_down_{0}; // interval for reflect fire
+  uint32_t switch_count_down_{0}; // every 120 ticks can switch mode
+  uint32_t quick_mode_time_{0}; // quick mode last for 300 ticks
 };
 }  // namespace battle_game::unit

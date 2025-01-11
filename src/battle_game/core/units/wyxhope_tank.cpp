@@ -182,6 +182,13 @@ void wyxhope_Tank::switchmode(){
     }else{
       switch_count_down_++;
     }
+    if(input_data.key_down[GLFW_KEY_E]){
+      if(fire_mode_ == false){
+        fire_mode_ = true;
+      }else{
+        fire_mode_ = false;
+      }
+    }
   }
 }
 
@@ -200,35 +207,43 @@ void wyxhope_Tank::TurretRotate() {
 }
 
 void wyxhope_Tank::Fire() {
-  if (fire_count_down_ == 0) {
+  if (fire_count_down_ == 0 && fire_mode_count_down_ == 0) {
     auto player = game_core_->GetPlayer(player_id_);
     if (player) {
       auto &input_data = player->GetInputData();
       if (input_data.mouse_button_down[GLFW_MOUSE_BUTTON_LEFT]) {
-        int random = game_core_->RandomInt(1, 100);
+        if(fire_mode_ == false){
+          int random = game_core_->RandomInt(1, 100);
         // with probability 10% the tank will generate a bullet with 2*speed and 2*damage, the color is red, otherwise 
         // the bullet will be normal
-        if(random <= 10){
-          auto velocity = Rotate(glm::vec2{0.0f, 40.0f}, turret_rotation_);
-          int type = 2;
-          GenerateBullet<bullet::CannonBall>(
-              position_ + Rotate({0.0f, 1.2f}, turret_rotation_),
-              turret_rotation_, 4.0 * GetDamageScale(), velocity, type);
-          fire_count_down_ = kTickPerSecond;  // Fire interval 1 second.
-          consecutive_fire_count_++;
-        }else{
+          if(random <= 10){
+            auto velocity = Rotate(glm::vec2{0.0f, 40.0f}, turret_rotation_);
+            int type = 2;
+            GenerateBullet<bullet::CannonBall>(
+                position_ + Rotate({0.0f, 1.2f}, turret_rotation_),
+                turret_rotation_, 4.0 * GetDamageScale(), velocity, type);
+            fire_count_down_ = kTickPerSecond;  // Fire interval 1 second.
+            consecutive_fire_count_++;
+          }else{
           //when the tank is moving, it's harder to accurately hit the target
-          auto velocity = Rotate(glm::vec2{0.0f, 20.0f}, turret_rotation_);
-          int type = 1;
-          GenerateBullet<bullet::CannonBall>(
+            auto velocity = Rotate(glm::vec2{0.0f, 20.0f}, turret_rotation_);
+            int type = 1;
+            GenerateBullet<bullet::CannonBall>(
+                position_ + Rotate({0.0f, 1.2f}, turret_rotation_),
+                turret_rotation_, 2.2 * GetDamageScale(), velocity, type);
+            fire_count_down_ = kTickPerSecond;  // Fire interval 1 second.
+            consecutive_fire_count_++;
+          }
+          if(consecutive_fire_count_ >= 6){
+            fire_count_down_ = 2 * kTickPerSecond;
+            consecutive_fire_count_ = 0;
+          }
+        }else{
+          auto velocity = Rotate(glm::vec2{0.0f, 10.0f}, turret_rotation_);
+          GenerateBullet<bullet::Rebounce_ball>(
               position_ + Rotate({0.0f, 1.2f}, turret_rotation_),
-              turret_rotation_, 2.2 * GetDamageScale(), velocity, type);
-          fire_count_down_ = kTickPerSecond;  // Fire interval 1 second.
-          consecutive_fire_count_++;
-        }
-        if(consecutive_fire_count_ >= 6){
-          fire_count_down_ = 2 * kTickPerSecond;
-          consecutive_fire_count_ = 0;
+              turret_rotation_, 6.0 * GetDamageScale(), velocity);
+          fire_mode_count_down_ = kTickPerSecond;  // Fire interval 1 second.
         }
       }else{
         consecutive_fire_count_ = 0;
@@ -237,6 +252,9 @@ void wyxhope_Tank::Fire() {
   }
   if (fire_count_down_) {
     fire_count_down_--;
+  }
+  if (fire_mode_count_down_){
+    fire_mode_count_down_--;
   }
 }
 
